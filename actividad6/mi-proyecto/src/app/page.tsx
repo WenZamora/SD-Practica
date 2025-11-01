@@ -1,7 +1,8 @@
 //pagina ppal -> server component por defecto
 
 import axios from "axios";
-import PokemonList from "./components/PokemonList";
+//import PokemonList from "./components/PokemonList";  // este no lo uso ahora uso
+import PokemonListWithQuery from "./components/PokemonListWithQuery";
 
 //url de la api de pokemon
 const Pokeapi_URL = 'https://pokeapi.co/api/v2/pokemon?limit=30&offset=0';
@@ -27,7 +28,8 @@ export default async function Home() {
   return ( // renderizo los datos
     <main> 
       <h1>Pokedex</h1>
-      <PokemonList pokemons={pokemonList} /> {/*Paso la lista ya cargada al componenre de PokemonList*/}
+        {/*<PokemonList pokemons={pokemonList} /> ////// Paso la lista ya cargada al componenre de PokemonList*/}
+        <PokemonListWithQuery /> {/* Ahora uso el componente con useQuery para obtener los datos */}
     </main>
   );
 }

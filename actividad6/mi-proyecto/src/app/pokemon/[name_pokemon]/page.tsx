@@ -13,7 +13,9 @@ interface PokemonDetailProps {
 }
 
 export default async function PokemonDetail({params}: PokemonDetailProps) { 
-    const pokemonName = params.name_pokemon; // extraigo el nombre del pokemon de los parametros de la ruta
+    // extraigo el nombre del pokemon de los parametros de la ruta
+    const {name_pokemon} = await params;
+    const pokemonName = name_pokemon; 
 
     // hago la llamada a la api para obtener los datos del pokemon especifico
     const pokeApiURL = `https://pokeapi.co/api/v2/pokemon/${pokemonName}`; // se construye la url especifica
