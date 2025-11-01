@@ -1,9 +1,16 @@
-"use client"; // para que ejecute del lado del clinete
-import { useEffect, useState } from "react";
-import axios from "axios";
-import PokemonItem from "./PokemonItem";
+//Lo modifico porque ahora la carga la hago en la ppal 
+//-> recibe la lista de pokemons como props
 
-export default function PokemonList() {
+
+"use client"; // para que ejecute del lado del clinete
+//import { useEffect, useState } from "react"; // ya no lo necesito 
+//import axios from "axios";
+import PokemonItem from "./PokemonItem";
+import Link  from "next/link"; 
+
+//Ahora recibo un prop con la lista de pokemons
+export default function PokemonList( { pokemons } ) {
+    /* //// no lo necesitoporque la carga es en ppal
     const [ContPokemons, setPokemons] = useState([]);
 
     useEffect(() => { //trae los datos de la API cuando se ejecuta el componnete
@@ -19,17 +26,18 @@ export default function PokemonList() {
         }
 
         fetchPokemons(); // llamo a la funcion para que se ejecute
-
+        */
+  
         /*return() => {
             //Cleanup opcional
         };*/
-
+/*
     }, []); // [dependencia]--> el array vacio es para que se ejecute una sola vez al montar el componente
 
     return (
         <div> 
             <h2>Listado de Pokemons</h2>
-
+    /////////////////////no necesito mas el cargando ..... 
             {ContPokemons.length === 0 ? ( // muestra "cargando.." si no hay pokemons
                 <p>Cargando...</p>
             ) : ( // si hay, los muestro en una lista
@@ -48,6 +56,27 @@ export default function PokemonList() {
                     ))}
                 </ul>
             )}
+        </div>
+    );*/
+
+    if (!pokemons || pokemons.length === 0) { // !pokemons --> si es undefined o null // pokemons.length === 0 --> si es un array vacio
+        return <p>No se recibieron pokemons.</p>;
+    }
+
+    return(
+        <div> 
+            <h2>Listado de Pokemons</h2>
+            <ul style={{ 
+                display: "flex", 
+                flexWrap: "wrap", 
+                padding: 0, 
+                justifyContent: "center",
+            }}>
+                {pokemons.map((pokemon) => ( // recorro el array de pokemons
+                    // Paso el objeto pokemon al item.
+                    <PokemonItem key={pokemon.name} pokemon={pokemon} /> // uso el componente PokemonItem para mostrar cada pokemon
+                ))}
+            </ul>
         </div>
     );
 }
