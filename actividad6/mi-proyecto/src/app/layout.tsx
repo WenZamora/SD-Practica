@@ -1,8 +1,7 @@
-// Es un server component por defecto -> se renderiza en le servidor
-// Envuelve a todas las páginas de app (lista principal y detalle de pokemon)
-// Sirve para definir una estructura común (navbar, footer ..) para todas las páginas
-
 import Link from "next/link"; 
+
+// ahora el layout tiene que envolver el contendico con el providers.tsx, 
+import { Providers } from "./providers";
 
 //Va a recibir "children" que es lo que se va a renderizar dentro del layout
 export default function RootLayout ({children}: {children: React.ReactNode}) { // children es de tipo React.ReactNode - 
@@ -24,7 +23,7 @@ export default function RootLayout ({children}: {children: React.ReactNode}) { /
             fontWeight: 'bold', 
             fontSize: '1.2em'
           }}>
-            Pokedex - Lista Principal
+            Pokedex
           </Link>
         </nav>
         </header>
@@ -34,7 +33,11 @@ export default function RootLayout ({children}: {children: React.ReactNode}) { /
           padding: '20px', 
           minHeight: '80vh'
         }}>
-          {children}
+          {/* !!!!!!!!!!!Envuelvo el contenido con el providers!!!!!!!!!!*/}
+          {/*Ahora cualque componnte (app/page.tsx o ls hijos)dentro del main puede usar useQuery  */}
+          <Providers>
+            {children}
+          </Providers>
         </main>
 
         {/* Footer con texto de relleno */}
