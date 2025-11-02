@@ -1,12 +1,19 @@
 
 "use client"; //vuelve a ser componente cliente
 
+import React, { useState } from 'react';
 import Link from "next/link"; 
 //import los hooks de mutacion 
 import { useAddFavorite, useRemoveFavorite } from "../hooks/useFavorites";
+import FavoriteFormModal from './FavoriteFormModal';
 
-//Recibo la prop "pokemon" que va a contener { name: string, url: string }
+
 export default function PokemonItem({pokemon, isFavorite}) {
+
+  const [isModalOpen, setIsModalOpen] = useState(false); // estado del modal
+
+  const closeModal = () => setIsModalOpen(false);
+
   //llamada a los hooks
   const addMutation = useAddFavorite();
   const removeMutation = useRemoveFavorite();
@@ -17,7 +24,7 @@ export default function PokemonItem({pokemon, isFavorite}) {
   const errorMessage = addMutation.error?.message || removeMutation.error?.message;
 
   //func para agregar o sacar de fav
-  const handleToggleFavorite = () => { // mira el prop isFavorite y analizo si es t o f
+  const handleToggleFavorite = () => { // mira el prop isFavorite y analizo si es verdadero o falso
     const favoriteData = {
         id: pokemon.name, // El slug ej: "pikachu")
         name: pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1), // El nombre con mayúscula inicial
@@ -25,9 +32,12 @@ export default function PokemonItem({pokemon, isFavorite}) {
 
     if (isFavorite) {// Si es fav -> llama a la mutación de eliminación, pasando solo el ID
         removeMutation.mutate(pokemon.name);
-    } else { // Si NO es fav ->llama a la mutación de agregar, pasando el objeto de datos
-        addMutation.mutate(favoriteData);
+    } else { // Si NO es fav -> ABRE EL MODAL!
+        //addMutation.mutate(favoriteData);  lO QUE CAMBIA
+
+        setIsModalOpen(true);
     }
+
   };
 
 
@@ -70,30 +80,40 @@ export default function PokemonItem({pokemon, isFavorite}) {
         onClick={handleToggleFavorite}
         disabled={isLoading} // Deshabilitar si se está procesando (estado de carga)
         style={{ 
-            marginTop: '10px',
-            padding: '8px 15px',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            // La apariencia cambia si isFavorite es true!!!!!!!!!!
-            backgroundColor: isFavorite ? 'gold' : '#f0f0f0',
-            color: isFavorite ? 'black' : '#333',
-            fontWeight: 'bold',
-    }}>
-      {/* PARA MOSTRAR EL ESTADO DE CARGA */}
-      {isLoading ? (
-        "Procesando..." // muestar que esta cargadno
-      ): isFavorite ? (
-        "Quitar de favoritos" // es fav
-      ): (
-        "Agregar a favoritos" // no es fav
-      )}
+          marginTop: '10px',
+          padding: '8px 15px',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          // La apariencia cambia si isFavorite es true!!!!!!!!!!
+          backgroundColor: isFavorite ? 'gold' : '#f0f0f0',
+          color: isFavorite ? 'black' : '#333',
+          fontWeight: 'bold',
+        }}>
+          {/* PARA MOSTRAR EL ESTADO DE CARGA */}
+          {isLoading ? (
+            "Procesando..." // muestar que esta cargadno
+          ): isFavorite ? (
+            "Quitar de favoritos" // es fav
+          ): (
+            "Agregar a favoritos" // no es fav
+          )}
 
-    </button>
+      </button>
 
-    {/* para ver el Error */}
-    {hasError && <p style={{ color: 'red', fontSize: '0.8em', marginTop: '5px' }}>{errorMessage}</p>}
+        {/* para ver el Error */}
+        {hasError && <p style={{ color: 'red', fontSize: '0.8em', marginTop: '5px' }}>{errorMessage}</p>}
+        
 
+        {/*Para renderizar el modal -> solo cuando pokemon NO es fav y el estado modal es verdadeo */}
+
+        {!isFavorite && (
+          <FavoriteFormModal
+            isOpen= {isModalOpen} //paso estado apertura
+            pokemonData={pokemon} //paso datos 
+            closeModal={closeModal} //func para que se cierre a si mismo
+          />
+        )}
     </li>
   );
 }

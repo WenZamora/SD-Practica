@@ -19,8 +19,21 @@ export function useAddFavorite() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: favoritesService.add, // llamo a la func del service que hace el POST
-        
+        /////mutationFn: favoritesService.add, // llamo a la func del service que hace el POST
+        mutationFn: async (favoriteData: any) => {
+            const response = await fetch('/api/favorites', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(favoriteData),
+            });
+            if (!response.ok) {
+                const errorData = await response.json(); 
+                throw new Error(errorData.error || "Error al agregar favorito");
+            }
+            return response.json();
+        },
+
+
         //Al ser exitoso se invalida lacach
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: FAVORITES_QUERY_KEY}); //para que useFavorites se vuelva a ejecutar automat
@@ -33,8 +46,17 @@ export function useRemoveFavorite() {
   const queryClient = useQueryClient();
 
   return useMutation({
-        mutationFn: favoritesService.remove, //Llamo a la funcion de service que hace DELETE
+        //mutationFn: favoritesService.remove, //Llamo a la funcion de service que hace DELETE
         
+        mutationFn: async (id: string) => { 
+            const response = await fetch(`/api/favorites/${id}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) {
+                throw new Error("Error al eliminar favorito");
+            }
+        },
+
         onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: FAVORITES_QUERY_KEY });
         },
