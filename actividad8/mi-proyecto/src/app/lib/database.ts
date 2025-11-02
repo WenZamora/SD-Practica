@@ -8,7 +8,9 @@ const DB_PATH = path.join(process.cwd(), "database.json");
 export interface FavoritePokemon {
   id: string;
   name: string;
-  createdAt: string;
+  customName: string; 
+  description: string;
+  createdAt: Date;
 }
 
 class Database {
@@ -53,7 +55,7 @@ class Database {
 
     const newFavorite: FavoritePokemon = { //crea el nuevo obj 
       ...favorite,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
     };
 
     data.push(newFavorite); //guarda

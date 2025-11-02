@@ -1,6 +1,3 @@
-// post y get actuan soble coleccion completa de recurss por lo que van en la ruta ppal (a dif de delete que se asocia a un recurso especifico)
-//para crear el favorito y obtener la lista completa
-
 import { NextResponse } from "next/server"; 
 import { db } from "@/app/lib/database"; //importi la instancia de la BD
 
@@ -12,22 +9,32 @@ interface FavoriteBody { //defino el tipo de dato que espero en body
 //Ahora la funcion que maneha la peticion POST
 export async function POST(request: Request) {
     try {
-        const body: FavoriteBody = await request.json(); 
-        
+        const {
+            id,
+            name,
+            customName,
+            description
+        } = await request.json();
+
+
         //valido datos!!!
-        if (!body.id || !body.name) { 
+        if (!id || !name) { 
             return NextResponse.json(
-                { error: "Faltan datos obligatorios." }, 
+                { error: "Faltan datos id y name" }, 
                 { status: 400 }); // 400 : peticion incorrecta   
         }
 
         //ahora creo el fav en la BD
-        const newFavorite = await db.create(body); //uso la instancia de la BD y su metodo create
+        const newFavorite = await db.create({
+            id,
+            name,
+            customName: customName || name, // Si no viene customName, usa el nombre original
+            description: description || "Sin descripción", // Asignar un valor por defecto si no viene
+        }); //uso la instancia de la BD y su metodo create
 
         return NextResponse.json(newFavorite, { status: 201 }); //201: se creo exitosamente
+    
     } catch (error: any) {
-        //Tengo que manejar los error 
-
         //si BD lanza errir de duplicado 
         if(error.message.includes("ya existe en favoritos")) {
             return NextResponse.json(
